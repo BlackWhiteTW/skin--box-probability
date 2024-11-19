@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: */api*
+Disallow: */auth*
+Disallow: */favicon/*
+Disallow: */payments/*
+Crawl-delay: 5
+
+
+Sitemap: https://skin.club/sitemap.xml
+Sitemap: https://skin.club/community/en/sitemap_index.xml
