@@ -23,13 +23,10 @@ def get_box_url():
                 
     box_url = list(set(box_url))
     box_names = set(url.split('/')[-1] for url in box_url)
-    
-    for name in box_names:
-        print(f"Box: {name}")
         
     return list(box_names)
 
 # 測試
-get_box_url()
-print(len(get_box_url()))
-print("Done")
+# get_box_url()
+# print(len(get_box_url()))
+# print("Done")

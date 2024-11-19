@@ -20,6 +20,6 @@ def get_box_code(skin_club_url, box_name):
 
 
 # 測試
-skin_club_url = 'https://skin.club/cases/open/'
-box_name = 'ct_pistols_farm'
-print(len(get_box_code(skin_club_url, box_name)))
+# skin_club_url = 'https://skin.club/cases/open/'
+# box_name = 'ct_pistols_farm'
+# print(len(get_box_code(skin_club_url, box_name)))
