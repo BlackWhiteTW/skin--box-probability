@@ -32,6 +32,10 @@ driver.get(url)
 driver.implicitly_wait(10)
 time.sleep(5)  # 增加等待時間，確保頁面完全加載
 
+# 滾動頁面以模擬人類行為
+driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+time.sleep(5)  # 增加等待時間，確保頁面完全加載
+
 # 獲取渲染後的 HTML 內容
 html = driver.page_source
 
@@ -42,9 +46,13 @@ soup = BeautifulSoup(html, 'html.parser')
 with open('test/test0.html', 'w', encoding='utf-8') as f:
     f.write(soup.prettify())
 
+# 打印出整個 HTML 內容，方便檢查倍率資訊所在的位置
+print(soup.prettify())
+
 # 擷取包含 class="row" 的所有元素
 rows = soup.find_all('div', class_='row')
 print(len(rows))
+
 # 進一步解析每個 row 中的內容
 for row in rows:
     print("-----------------")
@@ -53,10 +61,9 @@ for row in rows:
     price_cell = row.find('div', class_='cell price-cell')
     range_cell = row.find('div', class_='cell range-cell')
     odds_cell = row.find('div', class_='cell odds-cell')
-#    price_cell = row.find('div', class_='cell price-cell ellipsis')
-#    range_cell = row.find('div', class_='cell range-cell ellipsis')
-#    odds_cell = row.find('div', class_='cell odds-cell ellipsis')
-    print(item_cell,price_cell,range_cell,odds_cell)
+    
+    print(item_cell, price_cell, range_cell, odds_cell)
+    
     if item_cell and price_cell and range_cell and odds_cell:
         weapon_name = item_cell.find('span', class_='weapon-name').text
         weapon_finish = item_cell.find('span', class_='weapon-finish').text
