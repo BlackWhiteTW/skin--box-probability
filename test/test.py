@@ -39,19 +39,24 @@ html = driver.page_source
 soup = BeautifulSoup(html, 'html.parser')
 
 # 將渲染後的 HTML 內容重新排版並儲存到文件中
-with open('test/test.html', 'w', encoding='utf-8') as f:
+with open('test/test0.html', 'w', encoding='utf-8') as f:
     f.write(soup.prettify())
 
 # 擷取包含 class="row" 的所有元素
 rows = soup.find_all('div', class_='row')
-
+print(len(rows))
 # 進一步解析每個 row 中的內容
 for row in rows:
+    print("-----------------")
+    
     item_cell = row.find('div', class_='cell item-cell')
     price_cell = row.find('div', class_='cell price-cell')
     range_cell = row.find('div', class_='cell range-cell')
     odds_cell = row.find('div', class_='cell odds-cell')
-    
+#    price_cell = row.find('div', class_='cell price-cell ellipsis')
+#    range_cell = row.find('div', class_='cell range-cell ellipsis')
+#    odds_cell = row.find('div', class_='cell odds-cell ellipsis')
+    print(item_cell,price_cell,range_cell,odds_cell)
     if item_cell and price_cell and range_cell and odds_cell:
         weapon_name = item_cell.find('span', class_='weapon-name').text
         weapon_finish = item_cell.find('span', class_='weapon-finish').text
