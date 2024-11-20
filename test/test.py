@@ -33,7 +33,7 @@ rows = soup.find_all('div', class_='row')
 print(len(rows))
 
 # 連接到 SQLite 資料庫
-conn = sqlite3.connect('test.db')
+conn = sqlite3.connect('test/test.db')
 c = conn.cursor()
 
 # 建立表格
