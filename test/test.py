@@ -25,7 +25,7 @@ html = driver.page_source
 soup = BeautifulSoup(html, 'html.parser')
 
 # HTML 排版並儲存到文件中
-with open('test/test0.html', 'w', encoding='utf-8') as f:
+with open('test/test.html', 'w', encoding='utf-8') as f:
     f.write(soup.prettify())
 
 # 提取包含 class="row" 的所有元素
