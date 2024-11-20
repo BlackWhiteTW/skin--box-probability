@@ -1,5 +1,5 @@
-data/box_save_en/*
-data/box_save_ja/*
-data/box_save_ko/*
-data/box_save_zh-cn/*
-data/box_save_zh-tw/*
+data/box_save_en/*.html
+data/box_save_ja/*.html
+data/box_save_ko/*.html
+data/box_save_zh-cn/*.html
+data/box_save_zh-tw/*.html
