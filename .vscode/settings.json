@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "C:/Users/91314/anaconda3/envs/pjsk/Lib/site-packages",
+        "./main"
+    ]
+}

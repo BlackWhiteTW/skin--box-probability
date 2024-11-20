@@ -27,6 +27,7 @@ def get_box_url():
     return list(box_names)
 
 # 測試
-# get_box_url()
-# print(len(get_box_url()))
-# print("Done")
+print("test")
+get_box_url()
+print(len(get_box_url()))
+print("Done")
