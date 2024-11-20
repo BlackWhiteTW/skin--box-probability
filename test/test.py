@@ -4,9 +4,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
+import sqlite3
 import time
 
-# 使用 webdriver_manager 來自動下載和安裝 ChromeDriver
+# 使用 webdriver_manager 自動下載和安裝 ChromeDriver
 service = Service(ChromeDriverManager().install())
 options = webdriver.ChromeOptions()
 options.add_argument("--headless")  # 如果你不需要看到瀏覽器，可以使用 headless 模式
@@ -32,10 +33,6 @@ driver.get(url)
 driver.implicitly_wait(10)
 time.sleep(5)  # 增加等待時間，確保頁面完全加載
 
-# 滾動頁面以模擬人類行為
-driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-time.sleep(5)  # 增加等待時間，確保頁面完全加載
-
 # 獲取渲染後的 HTML 內容
 html = driver.page_source
 
@@ -53,16 +50,24 @@ print(soup.prettify())
 rows = soup.find_all('div', class_='row')
 print(len(rows))
 
+# 連接到 SQLite 資料庫（如果資料庫不存在，會自動建立）
+conn = sqlite3.connect('test.db')
+c = conn.cursor()
+
+# 建立表格（如果尚未存在）
+c.execute('''CREATE TABLE IF NOT EXISTS odds_history
+            (weapon_name TEXT, weapon_finish TEXT, weapon_quality TEXT, price TEXT, odds_range TEXT, odds TEXT)''')
+
 # 進一步解析每個 row 中的內容
 for row in rows:
     print("-----------------")
     
     item_cell = row.find('div', class_='cell item-cell')
-    price_cell = row.find('div', class_='cell price-cell')
-    range_cell = row.find('div', class_='cell range-cell')
-    odds_cell = row.find('div', class_='cell odds-cell')
+    price_cell = row.find('div', class_='cell price-cell ellipsis')
+    range_cell = row.find('div', class_='cell range-cell ellipsis')
+    odds_cell = row.find('div', class_='cell odds-cell ellipsis')
     
-    print(item_cell, price_cell, range_cell, odds_cell)
+    print(item_cell, "\n", price_cell, "\n", range_cell, "\n", odds_cell)
     
     if item_cell and price_cell and range_cell and odds_cell:
         weapon_name = item_cell.find('span', class_='weapon-name').text
@@ -72,11 +77,27 @@ for row in rows:
         odds_range = range_cell.text.strip()
         odds = odds_cell.text.strip()
         
+        print("-" * 40)
         print(f"Weapon: {weapon_name} | {weapon_finish} {weapon_quality}")
         print(f"Price: {price}")
         print(f"Range: {odds_range}")
         print(f"Odds: {odds}")
-        print("-" * 40)
+        
+        # 將資料插入資料庫
+        c.execute("INSERT INTO odds_history (weapon_name, weapon_finish, weapon_quality, price, odds_range, odds) VALUES (?, ?, ?, ?, ?, ?)",
+                (weapon_name, weapon_finish, weapon_quality, price, odds_range, odds))
+
+# 提交交易
+conn.commit()
+
+# 列印出資料庫中的所有內容
+c.execute("SELECT * FROM odds_history")
+rows = c.fetchall()
+for row in rows:
+    print(row)
+
+# 關閉連接
+conn.close()
 
 # 關閉瀏覽器
 driver.quit()
