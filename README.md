@@ -11,11 +11,11 @@
 ## 使用方法：
 1. 下載此存儲庫到本地。
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/BlackWhiteTW/skin--box-probability.git
     ```
 2. 進入專案目錄。
     ```bash
-    cd 爬蟲練習
+    cd skin--box-probability
     ```
 3. 安裝所需的依賴。
     ```bash
@@ -31,3 +31,12 @@
 - `requirements.txt`：依賴包列表
 - `README.md`：專案說明文件
 - `test`：測試用資料夾，可以刪除
+
+## 主要功能：
+- 爬取 Skinclub 網站上的箱子資訊
+- 計算每個箱子的期望值
+- 儲存和列印結果到 SQLite 資料庫
+
+## 注意事項：
+- 請確保已安裝所有依賴包
+- 請確保網路連接正常，以便爬取網站資料
