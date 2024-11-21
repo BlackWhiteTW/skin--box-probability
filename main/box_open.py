@@ -40,3 +40,9 @@ def box_open(html):
             })
 
     return results
+
+# 測試
+if __name__ == "__main__":
+    with open('data/box_save_en/example_box.html', 'r', encoding='utf-8') as f:
+        html = f.read()
+    print(box_open(html))

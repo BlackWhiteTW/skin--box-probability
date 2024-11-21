@@ -29,13 +29,10 @@ class WebDriverManager:
         self.driver.quit()
 
 # 測試
-"""
-print("test")
-skin_club_url = 'https://skin.club/cases/'
-box_name = 'ct_pistols_farm'
-web_driver_manager = WebDriverManager()
-html_content = web_driver_manager.get_box_code(skin_club_url, box_name)
-print(len(html_content))
-web_driver_manager.quit()
-print("Done")
-"""
+if __name__ == "__main__":
+    skin_club_url = 'https://skin.club/cases/'
+    box_name = 'ct_pistols_farm'
+    web_driver_manager = WebDriverManager()
+    html_content = web_driver_manager.get_box_code(skin_club_url, box_name)
+    print(len(html_content))
+    web_driver_manager.quit()
