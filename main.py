@@ -24,6 +24,8 @@ from html_save import save_html
 from map_and_rule import get_map_rule
 from box_open import box_open
 
+update = False
+
 # 檢查 skin_map.txt 的日期
 def is_skin_map_outdated(file_path):
     if not os.path.exists(file_path):
@@ -37,8 +39,10 @@ if is_skin_map_outdated(skin_map_file):
     print("skin_map.txt 已經超過一個月未更新，正在更新資料...")
     get_map_rule()
     print("skin_map.txt 已更新。")
+    update = True
 else:
     print("skin_map.txt 是最新的。")
+    update = False
 
 # 下載箱子的資料
 box_name = get_box_url()
@@ -52,12 +56,9 @@ language = 'zh-tw'
 # 初始化 WebDriverManager
 web_driver_manager = WebDriverManager()
 
-# 詢問是否要儲存HTML
-save_html_bool = input("是否要下載並儲存個箱子的HTML? (Y/N): ").strip().lower() == 'y'
-
 # 儲存資料 ( HTML ) ， 如果不需要每次都詢問是否儲存可以註解掉
 # 警告：這個步驟會花費大量時間，且下載時會占用大量記憶體
-if save_html_bool:
+if update:
     for box in box_name:
         print(language, box)
         print(f"{box_name.index(box) + 1} / {len(box_name)}")
