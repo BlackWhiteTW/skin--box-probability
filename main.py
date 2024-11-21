@@ -1,9 +1,11 @@
 # 主要執行的程式
 
 # 匯入套件
-import os
+import os, sys, time
 from datetime import datetime, timedelta
-import sys
+import glob
+from bs4 import BeautifulSoup
+import sqlite3
 
 # 確保當前目錄在 sys.path 中
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -17,9 +19,10 @@ if main_dir not in sys.path:
     
 # 匯入自己做的程式
 from html_open import get_box_url
-from html_download import get_box_code
+from html_download import WebDriverManager
 from html_save import save_html
 from map_and_rule import get_map_rule
+from box_open import box_open
 
 # 檢查 skin_map.txt 的日期
 def is_skin_map_outdated(file_path):
@@ -29,7 +32,7 @@ def is_skin_map_outdated(file_path):
     return datetime.now() - file_mod_time > timedelta(days=30)
 
 # 檢查 skin_map.txt 是否過期
-skin_map_file = os.path.join(current_dir, 'skin_map.txt')
+skin_map_file = os.path.join(current_dir, 'data', 'skin_club', 'skin_map.txt')
 if is_skin_map_outdated(skin_map_file):
     print("skin_map.txt 已經超過一個月未更新，正在更新資料...")
     get_map_rule()
@@ -41,20 +44,88 @@ else:
 box_name = get_box_url()
 
 # 設定箱子的網址
-skin_club_url = 'https://skin.club/cases/open/'
+skin_club_url = 'https://skin.club/en/cases/'
+
+# 設定語言
+language = 'zh-tw'
+
+# 初始化 WebDriverManager
+web_driver_manager = WebDriverManager()
 
 # 詢問是否要儲存HTML
 save_html_bool = input("是否要下載並儲存個箱子的HTML? (Y/N): ").strip().lower() == 'y'
 
-# 儲存資料 ( HTML ) ， 如果不需要儲存可以註解掉
+# 儲存資料 ( HTML ) ， 如果不需要每次都詢問是否儲存可以註解掉
+# 警告：這個步驟會花費大量時間，且下載時會占用大量記憶體
 if save_html_bool:
-    language = ['en','zh-tw','zh-cn','ja','ko']
-    save_languages = input("請輸入要儲存的語言 (en/zh-tw/zh-cn/ja/ko)，以逗號分隔: ").strip().lower().split(',')
-    save_languages = [lang.strip() for lang in save_languages if lang.strip() in language]
-    for lang in save_languages:
-        for box in box_name:
-            print(lang, box)
-            print(f"{save_languages.index(lang) + 1} / {len(save_languages)} , {box_name.index(box) + 1} / {len(box_name)}")
-            tmp = get_box_code(skin_club_url, box)
-            save_html(tmp, box, lang)
+    for box in box_name:
+        print(language, box)
+        print(f"{box_name.index(box) + 1} / {len(box_name)}")
+        tmp = web_driver_manager.get_box_code(skin_club_url, box)
+        save_html(tmp, box, language)
 
+# 將以下載的箱子資料做處理並儲存到main/data
+processed_boxes = []
+box_arr = []
+
+for box in box_name:
+    if box in processed_boxes:
+        continue
+
+    file_path = os.path.join(current_dir, 'data', 'box_save_' + language, box + '.html')
+    print(file_path)
+    if not os.path.exists(file_path):
+        print(f"File not found: {file_path}")
+        continue
+
+    with open(file_path, 'r', encoding='utf-8') as f:
+        file_open = f.read()
+    result = box_open(file_open)
+    print(result)
+    if result or result != []:
+        print(box)
+        print(result)
+        processed_boxes.append(box)
+        box_arr.append(result)
+
+    else:
+        print(f"Failed to parse: {file_path}")
+
+print(processed_boxes)
+print(len(processed_boxes))
+print("-"*50)
+print(box_arr)
+print(len(box_arr))
+# 儲存處理後的箱子資料到 main/data
+output_dir = os.path.join(current_dir, 'main', 'data')
+os.makedirs(output_dir, exist_ok=True)
+
+for box, data in zip(processed_boxes, box_arr):
+
+    # 連接到 SQLite 資料庫
+    conn = sqlite3.connect(f'main/data/{box}.db')
+    c = conn.cursor()
+
+    # 清空表格資料
+    c.execute('DELETE FROM odds_history')
+
+    # 建立表格
+    c.execute('''CREATE TABLE IF NOT EXISTS odds_history
+                (weapon_name TEXT, weapon_finish TEXT, weapon_quality TEXT, price TEXT, odds_range TEXT, odds TEXT)''')
+
+    for item in data:
+        weapon_name = item.get('weapon_name', '')
+        weapon_finish = item.get('weapon_finish', '')
+        weapon_quality = item.get('weapon_quality', '')
+        price = item.get('price', '')
+        odds_range = item.get('odds_range', '')
+        odds = item.get('odds', '')
+
+        c.execute("INSERT INTO odds_history (weapon_name, weapon_finish, weapon_quality, price, odds_range, odds) VALUES (?, ?, ?, ?, ?, ?)",
+                (weapon_name, weapon_finish, weapon_quality, price, odds_range, odds))
+
+    # 提交交易
+    conn.commit()
+
+# 關閉 WebDriver
+web_driver_manager.quit()

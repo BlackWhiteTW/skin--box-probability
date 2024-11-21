@@ -42,15 +42,12 @@ c.execute('''CREATE TABLE IF NOT EXISTS odds_history
 
 # 進一步解析每個 row 中的內容
 for row in rows:
-    
+
     item_cell = row.find('div', class_='cell item-cell')
     price_cell = row.find('div', class_='cell price-cell ellipsis')
     range_cell = row.find('div', class_='cell range-cell ellipsis')
     odds_cell = row.find('div', class_='cell odds-cell ellipsis')
-    
-    # 列印出每個 cell 的內容 (測試用)
-    # print(item_cell, "\n", price_cell, "\n", range_cell, "\n", odds_cell)
-    
+
     # 判斷是否找到了所有的 cell
     if item_cell and price_cell and range_cell and odds_cell:
         weapon_name = item_cell.find('span', class_='weapon-name').text
@@ -59,14 +56,14 @@ for row in rows:
         price = price_cell.text.strip()
         odds_range = range_cell.text.strip()
         odds = odds_cell.text.strip()
-        
+
         # 列印出這次找到的的內容
         print("-" * 40)
         print(f"Weapon: {weapon_name} | {weapon_finish} {weapon_quality}")
         print(f"Price: {price}")
         print(f"Range: {odds_range}")
         print(f"Odds: {odds}")
-        
+
         # 將資料插入資料庫
         c.execute("INSERT INTO odds_history (weapon_name, weapon_finish, weapon_quality, price, odds_range, odds) VALUES (?, ?, ?, ?, ?, ?)",
                 (weapon_name, weapon_finish, weapon_quality, price, odds_range, odds))

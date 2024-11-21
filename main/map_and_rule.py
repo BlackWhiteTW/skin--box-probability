@@ -20,6 +20,8 @@ def get_map_rule():
         f.write(response.text)
 
 # 測試
+"""
 print("test")
 get_map_rule()
 print("Done")
+"""
