@@ -10,9 +10,7 @@ def get_box_data(box_name):
     return data
 
 # 計算理論值、支付的錢和回本概率
-def calculate_theoretical_value(box_name, num_draws):
-    data = get_box_data(box_name)
-
+def calculate_theoretical_value(data, box_name, num_draws):
     # 將資料轉換為適當的格式
     items = []
     for row in data:
@@ -31,9 +29,8 @@ def calculate_theoretical_value(box_name, num_draws):
 
     # 計算總獲得值
     total_value = 0
-    step = 100000 // (num_draws + 1)
-    for i in range(1, num_draws + 1):
-        position = i * step
+    for i in range(num_draws):
+        position = i % 100000 + 1
         for item in items:
             if item['odds_range'][0] <= position <= item['odds_range'][1]:
                 total_value += item['price']
@@ -62,18 +59,10 @@ def calculate_theoretical_value(box_name, num_draws):
 
     return total_value, average_value, total_cost, return_probability
 
-# 回傳結果
-def get_theoretical_value(box_name, num_draws):
-    total_value, average_value, total_cost, return_probability = calculate_theoretical_value(box_name, num_draws)
-    return total_value, average_value, total_cost, return_probability
-
-# 測試
-if __name__ == "__main__":
-    box_name = "25-anniversary"
-    num_draws = 4
-    total_value, average_value, total_cost, return_probability = get_theoretical_value(box_name, num_draws)
-    print(f"{box_name} 已抽取 {num_draws} 抽")
-    print(f"總獲得: {total_value}")
-    print(f"平均獲得: {average_value}")
-    print(f"總花費: {total_cost}")
-    print(f"回本率: {return_probability}")
+if __name__ == '__main__':
+    data = get_box_data('test_box')
+    total_value, average_value, total_cost, return_probability = calculate_theoretical_value(data, 'test_box', 1000)
+    print(f'Total Value: {total_value}')
+    print(f'Average Value: {average_value}')
+    print(f'Total Cost: {total_cost}')
+    print(f'Return Probability: {return_probability}')
