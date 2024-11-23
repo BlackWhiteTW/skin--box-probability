@@ -2,16 +2,6 @@
 
 # 匯入套件
 import os, sys, sqlite3
-
-# 確保當前目錄在 sys.path 中
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.append(current_dir)
-
-# 確保 ./main 目錄在 sys.path 中
-main_dir = os.path.join(current_dir, 'main')
-if main_dir not in sys.path:
-    sys.path.append(main_dir)
     
 # 匯入自己做的程式
 from html_open import get_box_url
@@ -20,7 +10,7 @@ from html_save import save_html
 from map_and_rule import get_map_rule
 from box_open import box_open
 from box_price import update_box_prices
-from box_excel import update_chart
+from box_img import update_chart
 
 def update_data():
 
@@ -41,15 +31,15 @@ def update_data():
 
     # 儲存資料 ( HTML ) 到 data/box_save_zh-tw
     # 警告：這個步驟會花費大量時間，且下載時會占用大量記憶體
-    """
+    
     for box in box_name:
         print(language, box)
         print(f"{box_name.index(box) + 1} / {len(box_name)}")
         tmp = web_driver_manager.get_box_code(skin_club_url, box)
         save_html(tmp, box, language)
-    """
+    
     print("Downloaded all box data")
-    """
+    
     # 將以下載的箱子資料做處理並儲存到main/data
     processed_boxes = []
     box_arr = []
@@ -128,11 +118,12 @@ def update_data():
     # 關閉 WebDriver
     web_driver_manager.quit()
     print("Closed WebDriver")
-    """
+    
     # 更新 img 檔案
     for box in box_name:
         update_chart(box)
     print("Updated all img files")
+    
 # 測試
 if __name__ == "__main__":
     update_data()

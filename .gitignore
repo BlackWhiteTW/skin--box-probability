@@ -3,3 +3,5 @@ data/box_save_ja/*.html
 data/box_save_ko/*.html
 data/box_save_zh-cn/*.html
 data/box_save_zh-tw/*.html
+
+bot/set.json

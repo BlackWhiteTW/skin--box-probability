@@ -1,6 +1,8 @@
+discord.py
 selenium
 webdriver-manager
 beautifulsoup4
 requests-html
 lxml
+matplotlib
 sqlite3
