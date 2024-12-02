@@ -17,7 +17,7 @@ class WebDriverManager:
         url = skin_club_url + box_name + "/odds-history"
         self.driver.get(url)
 
-        # 確保頁面加載完成
+        # 確保頁面加載完成  
         self.driver.implicitly_wait(60)
         time.sleep(5)
 

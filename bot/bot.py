@@ -19,7 +19,7 @@ from false_probability import get_box_data, calculate_theoretical_value
 from html_open import get_box_url
 from box_img import update_chart
 from box_price import update_box_prices
-from update import update_data
+from html_update import update_data
 
 # 檢查 skin_map.txt 的日期
 def is_skin_map_outdated(file_path):
@@ -72,6 +72,8 @@ async def calculate(interaction: discord.Interaction, box_name: str, num_draws: 
 
 @bot.tree.command(name='best_box', description='計算幾美金對應最好的箱子')
 async def best_box(interaction: discord.Interaction, budget: float):
+    await interaction.response.defer()  # 告訴 Discord 正在處理中
+
     box_names = get_box_url()
     best_box_name = None
     best_return_probability = 0
@@ -94,8 +96,9 @@ async def best_box(interaction: discord.Interaction, budget: float):
 
 @bot.tree.command(name='check_update', description='檢查是否需要更新')
 async def check_update(interaction: discord.Interaction):
+    await interaction.response.defer()  # 告訴 Discord 正在處理中
     # 檢查 skin_map.txt 是否過期
-    skin_map_file = os.path.join('data', 'skin_club', 'skin_map.txt')
+    skin_map_file = os.path.join(current_dir, '..', 'data', 'skin_club', 'skin_map.txt')
     if is_skin_map_outdated(skin_map_file):
         print("skin_map.txt 已經超過一周未更新，正在更新資料...")
         update_data()
